@@ -24,7 +24,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
 
 
@@ -51,7 +50,7 @@ def submit():
     conn.commit()
     conn.close()
 
-    return redirect('/')
+    return redirect('/?success=1')
 
 
 @app.route('/admin')
