@@ -46,11 +46,26 @@
         .topbar {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
         .topbar h2 {
             margin: 0;
+        }
+
+        /* 🔴 Logout Button */
+        .logout-btn {
+            text-decoration: none;
+            background: #ef4444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
         }
 
         /* Cards */
@@ -143,8 +158,10 @@
 
 <div class="main">
 
+    <!-- ✅ UPDATED TOPBAR WITH LOGOUT -->
     <div class="topbar">
         <h2>Dashboard</h2>
+        <a href="/logout" class="logout-btn">Logout</a>
     </div>
 
     <!-- Cards -->
