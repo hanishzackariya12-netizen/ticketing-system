@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ticket System</title>
+    <title>Submit Ticket</title>
+
     <style>
         body {
-            font-family: Arial;
-            background: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #007bff, #00c6ff);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        .container {
+        .card {
             background: white;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 350px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         h2 {
             text-align: center;
+            margin-bottom: 20px;
         }
 
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
+            margin: 8px 0;
+            border-radius: 6px;
             border: 1px solid #ccc;
         }
 
@@ -38,8 +40,9 @@
             background: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         button:hover {
@@ -50,14 +53,12 @@
 
 <body>
 
-<div class="container">
-    <h2>Submit Ticket</h2>
+<div class="card">
+    <h2> Submit Ticket</h2>
 
     <form method="POST" action="/submit">
         <input type="text" name="name" placeholder="Your Name" required>
-
         <input type="email" name="email" placeholder="Your Email" required>
-
         <textarea name="issue" placeholder="Describe your issue" required></textarea>
 
         <select name="priority">
