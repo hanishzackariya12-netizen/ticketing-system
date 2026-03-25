@@ -5,71 +5,148 @@
 
     <style>
         body {
+            margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #007bff, #00c6ff);
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+        }
+
+        .container {
+            width: 400px;
         }
 
         .card {
             background: white;
             padding: 30px;
             border-radius: 12px;
-            width: 350px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h2 {
             text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
             margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-top: 10px;
         }
 
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            margin: 8px 0;
+            margin-top: 5px;
             border-radius: 6px;
             border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 5px rgba(37,99,235,0.3);
+        }
+
+        textarea {
+            resize: none;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
+            margin-top: 20px;
+            padding: 12px;
             border: none;
             border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
         button:hover {
-            background: #0056b3;
+            background: #1e40af;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
         }
     </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h2> Submit Ticket</h2>
+<div class="container">
+    <div class="card">
 
-    <form method="POST" action="/submit">
-        <input type="text" name="name" placeholder="Your Name" required>
-        <input type="email" name="email" placeholder="Your Email" required>
-        <textarea name="issue" placeholder="Describe your issue" required></textarea>
+        <h2>🎫 Submit Ticket</h2>
+        <p class="subtitle">Raise your issue and we’ll resolve it quickly</p>
 
-        <select name="priority">
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
-        </select>
+        <!-- SUCCESS MESSAGE -->
+        {% if request.args.get('success') %}
+        <div class="success" id="successMsg">
+            ✅ Ticket submitted successfully!
+        </div>
+        {% endif %}
 
-        <button type="submit">Submit Ticket</button>
-    </form>
+        <form method="POST" action="/submit">
+
+            <label>Full Name</label>
+            <input type="text" name="name" required>
+
+            <label>Email Address</label>
+            <input type="email" name="email" required>
+
+            <label>Issue Description</label>
+            <textarea name="issue" rows="4" required></textarea>
+
+            <label>Priority Level</label>
+            <select name="priority">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+            </select>
+
+            <button type="submit">Submit Ticket</button>
+
+        </form>
+
+    </div>
 </div>
+
+<!-- AUTO HIDE SUCCESS MESSAGE -->
+<script>
+setTimeout(() => {
+    let msg = document.getElementById("successMsg");
+    if (msg) {
+        msg.style.display = "none";
+    }
+}, 3000);
+</script>
 
 </body>
 </html>
