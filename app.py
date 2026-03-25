@@ -46,7 +46,7 @@ def submit():
     conn.commit()
     conn.close()
 
-    return "✅ Ticket Submitted!"
+   return redirect('/?success=1')
 
 @app.route('/admin')
 def admin():
