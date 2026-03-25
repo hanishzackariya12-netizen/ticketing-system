@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        tr:hover {
+            background: #e6f0ff;
+        }
+
+        select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+        }
+        .delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #b02a37;
+}
+
+        .open { background: gray; }
+        .inprogress { background: orange; }
+        .closed { background: green; }
+    </style>
+</head>
+
+<body>
+
+<h2>Ticket Dashboard</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Issue</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Update</th>
+        <th>Action</th>
+        <th>Date</th>
+    </tr>
+
+    {% for ticket in tickets %}
+    <tr>
+        <td>{{ ticket[0] }}</td>
+        <td>{{ ticket[1] }}</td>
+        <td>{{ ticket[2] }}</td>
+        <td>{{ ticket[3] }}</td>
+
+        <td>
+            <span class="badge 
+                {% if ticket[4]=='Low' %}inprogress
+                {% elif ticket[4]=='Medium' %}inprogress
+                {% else %}closed
+                {% endif %}">
+                {{ ticket[4] }}
+            </span>
+        </td>
+
+        <td>
+            <span class="badge 
+                {% if ticket[5]=='Open' %}open
+                {% elif ticket[5]=='In Progress' %}inprogress
+                {% else %}closed
+                {% endif %}">
+                {{ ticket[5] }}
+            </span>
+        </td>
+
+        <!-- 🔥 DROPDOWN -->
+        <td>
+            <select onchange="updateStatus({{ticket[0]}}, this.value)">
+                <option disabled selected>Change</option>
+                <option value="Open">Open</option>
+                <option value="In_Progress">In Progress</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </td>
+
+        <td>
+    <button class="delete-btn" onclick="deleteTicket({{ ticket[0] }})">
+        🗑 Delete
+    </button>
+</td>
+
+        <td>{{ ticket[6] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- 🔥 JAVASCRIPT -->
+<script>
+function updateStatus(id, status) {
+    window.location.href = "/update_status/" + id + "/" + status;
+}
+</script>
+<script>
+function deleteTicket(id) {
+    if (confirm("Are you sure you want to delete this ticket?")) {
+        window.location.href = "/delete/" + id;
+    }
+}
+</script>
+</body>
+</html>
