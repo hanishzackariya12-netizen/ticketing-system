@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = "secret123"  # required for login
 
 # Create database
 def init_db():
@@ -27,11 +28,37 @@ def init_db():
 init_db()
 
 
+# 🔐 LOGIN PAGE
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # simple login (you can change later)
+        if username == "admin" and password == "1234":
+            session['user'] = username
+            return redirect('/admin')
+        else:
+            return render_template('login.html', error="Invalid credentials")
+
+    return render_template('login.html')
+
+
+# 🔓 LOGOUT
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/login')
+
+
+# 🏠 HOME
 @app.route('/')
 def home():
     return render_template('form.html')
 
 
+# ➕ SUBMIT
 @app.route('/submit', methods=['POST'])
 def submit():
     name = request.form['name']
@@ -53,41 +80,47 @@ def submit():
     return redirect('/?success=1')
 
 
+# 🧑‍💼 ADMIN (PROTECTED)
 @app.route('/admin')
 def admin():
+    if 'user' not in session:
+        return redirect('/login')
+
     conn = sqlite3.connect('tickets.db')
     cursor = conn.cursor()
-
     cursor.execute("SELECT * FROM tickets")
     tickets = cursor.fetchall()
-
     conn.close()
 
     return render_template('admin.html', tickets=tickets)
 
 
+# 🔄 UPDATE STATUS
 @app.route('/update_status/<int:id>/<status>')
 def update_status(id, status):
+    if 'user' not in session:
+        return redirect('/login')
+
     status = status.replace("_", " ")
 
     conn = sqlite3.connect('tickets.db')
     cursor = conn.cursor()
-
     cursor.execute("UPDATE tickets SET status=? WHERE id=?", (status, id))
-
     conn.commit()
     conn.close()
 
     return redirect('/admin')
 
 
+# 🗑 DELETE
 @app.route('/delete/<int:id>')
 def delete_ticket(id):
+    if 'user' not in session:
+        return redirect('/login')
+
     conn = sqlite3.connect('tickets.db')
     cursor = conn.cursor()
-
     cursor.execute("DELETE FROM tickets WHERE id=?", (id,))
-
     conn.commit()
     conn.close()
 
