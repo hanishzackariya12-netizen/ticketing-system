@@ -9,15 +9,15 @@ def init_db():
 conn = sqlite3.connect('tickets.db')
 cursor = conn.cursor()
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS tickets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        issue TEXT,
-        priority TEXT,
-        status TEXT,
-        created_at TEXT
-    )
+CREATE TABLE IF NOT EXISTS tickets (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT,
+email TEXT,
+issue TEXT,
+priority TEXT,
+status TEXT,
+created_at TEXT
+)
 ''')
 conn.commit()
 conn.close()
@@ -39,14 +39,14 @@ conn = sqlite3.connect('tickets.db')
 cursor = conn.cursor()
 
 cursor.execute('''
-    INSERT INTO tickets (name, email, issue, priority, status, created_at)
-    VALUES (?, ?, ?, ?, 'Open', ?)
+INSERT INTO tickets (name, email, issue, priority, status, created_at)
+VALUES (?, ?, ?, ?, 'Open', ?)
 ''', (name, email, issue, priority, datetime.now()))
 
 conn.commit()
 conn.close()
 
-return redirect('/?success=1')
+return redirect('/')
 
 @app.route('/admin')
 def admin():
