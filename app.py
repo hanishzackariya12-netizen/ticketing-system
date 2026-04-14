@@ -134,27 +134,31 @@ def delete_ticket(id):
 
     return redirect('/admin')
     from flask import jsonify
-
-import requests
-
 import requests
 
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message").lower()
 
-    # ✅ SMART RULE-BASED RESPONSES (FAST + PROFESSIONAL)
+    # Default priority
+    priority = "Low"
+
+    #  RULE-BASED RESPONSES
     if "login" in user_message:
         reply = "Login issue? Try resetting your password or check your credentials."
+        priority = "Medium"
 
     elif "error" in user_message or "bug" in user_message:
         reply = "This looks like a technical issue. Please describe it clearly and set priority to HIGH."
+        priority = "High"
 
     elif "slow" in user_message or "performance" in user_message:
         reply = "Performance issue detected. Usually MEDIUM priority. Mention where it's slow."
+        priority = "Medium"
 
-    elif "crash" in user_message:
+    elif "crash" in user_message or "down" in user_message:
         reply = "App crash is serious. Set priority to HIGH and include steps to reproduce."
+        priority = "High"
 
     elif "ticket" in user_message:
         reply = "You can submit a ticket using the form. Fill all details and click submit."
@@ -162,7 +166,7 @@ def chat():
     elif "hello" in user_message or "hi" in user_message:
         reply = "👋 Hey! I'm your AI assistant. Tell me your issue 😊"
 
-    # 🤖 FALLBACK TO FREE AI (HUGGINGFACE)
+    #  FREE AI FALLBACK (HuggingFace)
     else:
         API_URL = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
 
@@ -172,34 +176,21 @@ def chat():
 
             if isinstance(data, list) and "generated_text" in data[0]:
                 reply = "🤖 " + data[0]["generated_text"]
-
             elif "error" in data:
                 reply = "AI is waking up... try again in a few seconds."
-
             else:
                 reply = "I understand your issue. Please provide more details so I can help better."
 
         except:
             reply = "AI unavailable. Please try again."
-            # Detect priority
-    priority = "Low"
 
-    if "crash" in user_message or "down" in user_message:
-    priority = "High"
-    elif "slow" in user_message:
-    priority = "Medium"
-
-    reply = f"I understood your issue. Suggested priority: {priority}"
-
+    #  Final response (ONLY ONE RETURN)
     return jsonify({
-    "reply": reply,
-    "autofill": {
-        "description": user_message,
-        "priority": priority
-    }
-})
-
-    return jsonify({"reply": reply})
-
+        "reply": reply,
+        "autofill": {
+            "description": user_message,
+            "priority": priority
+        }
+    })
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
