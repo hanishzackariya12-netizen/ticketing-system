@@ -136,22 +136,29 @@ def delete_ticket(id):
     return redirect('/admin')
     from flask import jsonify
 
-@app.route('/chat', methods=['POST'])
+@app.route("/chat", methods=["POST"])
 def chat():
-    data = request.get_json()
-    user_message = data['message'].lower()
+    user_message = request.json.get("message")
 
-    # Simple AI logic
-    if "hello" in user_message:
-        reply = "Hello! How can I help you?"
-    elif "ticket" in user_message:
-        reply = "You can submit a ticket using the form."
-    elif "status" in user_message:
-        reply = "You can check ticket status in the admin dashboard."
-    elif "problem" in user_message:
-        reply = "Please describe your issue clearly while submitting a ticket."
-    else:
-        reply = "I'm here to help! Please ask about tickets or issues."
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful AI assistant for a ticketing system. Help users create tickets, understand issues, and guide them."
+                },
+                {
+                    "role": "user",
+                    "content": user_message
+                }
+            ]
+        )
+
+        reply = response.choices[0].message.content
+
+    except Exception as e:
+        reply = f"Error: {str(e)}"
 
     return jsonify({"reply": reply})
 
