@@ -180,18 +180,18 @@ def chat():
                 reply = "I understand your issue. Please provide more details so I can help better."
 
         except:
-            reply = "⚠️ AI unavailable. Please try again."
+            reply = "AI unavailable. Please try again."
             # Detect priority
-priority = "Low"
+    priority = "Low"
 
-if "crash" in user_message or "down" in user_message:
+    if "crash" in user_message or "down" in user_message:
     priority = "High"
-elif "slow" in user_message:
+    elif "slow" in user_message:
     priority = "Medium"
 
-reply = f"🧾 I understood your issue. Suggested priority: {priority}"
+    reply = f"I understood your issue. Suggested priority: {priority}"
 
-return jsonify({
+    return jsonify({
     "reply": reply,
     "autofill": {
         "description": user_message,
