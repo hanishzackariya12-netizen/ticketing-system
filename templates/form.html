@@ -210,7 +210,7 @@ function sendMessage() {
     })
     .then(res => res.json())
     .then(data => {
-        box.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
+       msgBox.innerHTML += `<div style="margin:5px 0;"><b>🤖 Bot:</b> ${data.reply}</div>`;
         box.scrollTop = box.scrollHeight;
     });
 
