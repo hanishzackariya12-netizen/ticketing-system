@@ -136,29 +136,25 @@ def delete_ticket(id):
     return redirect('/admin')
     from flask import jsonify
 
+import requests
+
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message")
 
+    API_URL = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
+
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful AI assistant for a ticketing system. Help users create tickets, understand issues, and guide them."
-                },
-                {
-                    "role": "user",
-                    "content": user_message
-                }
-            ]
-        )
+        response = requests.post(API_URL, json={"inputs": user_message})
+        data = response.json()
 
-        reply = response.choices[0].message.content
+        if isinstance(data, list):
+            reply = data[0]["generated_text"]
+        else:
+            reply = "AI is thinking... please try again."
 
-    except Exception as e:
-        reply = f"Error: {str(e)}"
+    except Exception:
+        reply = "⚠️ AI is currently unavailable. Try again later."
 
     return jsonify({"reply": reply})
 
