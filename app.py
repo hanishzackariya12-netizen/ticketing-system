@@ -21,17 +21,16 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS tickets (
-        id SERIAL PRIMARY KEY,
-        name TEXT,
-        email TEXT,
-        issue TEXT,
-        priority TEXT,
-        status TEXT,
-        created_at TIMESTAMP
-    )
-    ''')
+    cursor.execute("""
+CREATE TABLE IF NOT EXISTS tickets (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    description TEXT,
+    priority TEXT,
+    status TEXT DEFAULT 'Pending'
+)
+""")
 
     conn.commit()
     conn.close()
@@ -182,6 +181,23 @@ def chat():
 
         except:
             reply = "⚠️ AI unavailable. Please try again."
+            # Detect priority
+priority = "Low"
+
+if "crash" in user_message or "down" in user_message:
+    priority = "High"
+elif "slow" in user_message:
+    priority = "Medium"
+
+reply = f"🧾 I understood your issue. Suggested priority: {priority}"
+
+return jsonify({
+    "reply": reply,
+    "autofill": {
+        "description": user_message,
+        "priority": priority
+    }
+})
 
     return jsonify({"reply": reply})
 

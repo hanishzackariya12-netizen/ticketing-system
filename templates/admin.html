@@ -171,6 +171,18 @@
         <div class="card closed">Closed: {{ tickets|selectattr(5, 'equalto', 'Closed')|list|length }}</div>
     </div>
 
+    <div style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+    
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search tickets..." 
+        onkeyup="searchTickets()" 
+        style="padding: 12px; width: 280px; border-radius: 10px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); outline: none;"
+    >
+
+</div>
+
     <!-- Table -->
     <table>
         <tr>
@@ -229,6 +241,25 @@ function deleteTicket(id) {
     if (confirm("Delete ticket?")) {
         window.location.href = "/delete/" + id;
     }
+}
+</script>
+
+<script>
+function searchTickets() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("table tr");
+
+    rows.forEach((row, index) => {
+        if (index === 0) return; // skip header
+
+        let text = row.innerText.toLowerCase();
+
+        if (text.includes(input)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
 }
 </script>
 

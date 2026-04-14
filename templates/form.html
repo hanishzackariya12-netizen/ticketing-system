@@ -4,177 +4,218 @@
     <title>Submit Ticket</title>
 
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
 
-        .container {
-            width: 400px;
-        }
+/*  Background */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1d2b64, #f8cdda);
+    height: 100vh;
+    overflow-x: hidden;
+}
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+/*  Center Layout */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
 
-        h2 { text-align: center; }
-
-        .subtitle {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 10px;
-            display: block;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background: #2563eb;
-            color: white;
-            cursor: pointer;
-        }
-
-        .chat-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .dashboard-btn {
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 6px;
-    background: #111827;
+/*  Glass Card */
+.form-container {
+    width: 380px;
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
     color: white;
-    text-decoration: none;
-    font-size: 15px;
 }
 
-.dashboard-btn:hover {
-    background: #000;
+/*  Title */
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 5px;
 }
-        .dashboard-btn {
-    background: linear-gradient(45deg, #111827, #1f2937);
+
+.form-container p {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
 }
 
-        /* ✅ FIXED CHATBOX */
-        .chatbox {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 320px;
-            height: 420px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+/*  Floating Input Group */
+.input-group {
+    position: relative;
+    margin-top: 20px;
+}
 
-            flex-direction: column;
-        }
+/*  Inputs */
+.input-group input,
+.input-group textarea,
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 14px;
+}
 
-        /* WHEN ACTIVE */
-        .chatbox.active {
-            display: flex;
-        }
+/*  Labels */
+.input-group label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 13px;
+    color: #ddd;
+    pointer-events: none;
+    transition: 0.3s;
+}
 
-        .chat-header {
-            background: #2563eb;
-            color: white;
-            padding: 12px;
-            text-align: center;
-        }
+/*  Floating effect */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group textarea:focus + label,
+.input-group textarea:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 8px;
+    font-size: 11px;
+    color: #fff;
+}
 
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
+/*  Buttons */
+.btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            gap: 8px;
-        }
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
 
-        .chat-input input {
-            flex: 1;
-            height: 40px;
-            padding: 0 10px;
-            border: 2px solid #2563eb;
-            border-radius: 6px;
-        }
+/*  Dashboard Button */
+.dashboard-btn {
+    background: linear-gradient(45deg, #232526, #414345);
+}
 
-        .chat-input button {
-            width: 60px;
-            background: #2563eb;
-            border-radius: 6px;
-        }
-    </style>
+/*  CHATBOX PREMIUM */
+.chatbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    height: 420px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Header */
+.chat-header {
+    padding: 15px;
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Messages */
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    color: white;
+}
+
+/* Input Area */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    gap: 8px;
+}
+
+/* Input */
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+/* Send Button */
+.chat-input button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="container">
-    <div class="card">
-        <h2>Submit Ticket</h2>
-        <p class="subtitle">Raise your issue and we’ll resolve it quickly</p>
+<<div class="container">
+<div class="form-container">
 
-        <form method="POST" action="/submit">
-            <label>Full Name</label>
-            <input type="text" name="name" required>
+<h2>Submit Ticket</h2>
+<p>Raise your issue and we’ll resolve it quickly</p>
 
-            <label>Email Address</label>
-            <input type="email" name="email" required>
+<form method="POST">
 
-            <label>Issue Description</label>
-            <textarea name="issue" rows="4"></textarea>
-
-            <label>Priority</label>
-            <select name="priority">
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-            </select>
-
-            <button type="submit">Submit Ticket</button>
-            <a href="/login" class="dashboard-btn">View Dashboard</a>
-        </form>
-    </div>
+<div class="input-group">
+    <input type="text" name="name" required placeholder=" ">
+    <label>Full Name</label>
 </div>
 
+<div class="input-group">
+    <input type="email" name="email" required placeholder=" ">
+    <label>Email Address</label>
+</div>
+
+<div class="input-group">
+    <textarea name="issue" required placeholder=" "></textarea>
+    <label>Issue Description</label>
+</div>
+
+<div class="input-group">
+    <select name="priority">
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+    </select>
+</div>
+
+<button class="btn">Submit Ticket</button>
+
+<a href="/admin">
+    <button type="button" class="btn dashboard-btn">View Dashboard</button>
+</a>
+
+</form>
+</div>
+</div>
 <!-- CHAT -->
 <button onclick="toggleChat()" class="chat-btn">💬</button>
 
@@ -210,12 +251,15 @@ function sendMessage() {
     })
     .then(res => res.json())
     .then(data => {
-       box.innerHTML += `<div style="margin:5px 0;"><b>Bot:</b> ${data.reply}</div>`;
-        box.scrollTop = box.scrollHeight;
-    });
+    msgBox.innerHTML += `<div><b>🤖 Bot:</b> ${data.reply}</div>`;
 
-    input.value = "";
-}
+    if (data.autofill) {
+        document.querySelector("textarea[name='description']").value = data.autofill.description;
+        document.querySelector("select[name='priority']").value = data.autofill.priority;
+    }
+
+    msgBox.scrollTop = msgBox.scrollHeight;
+})
 </script>
 
 </body>
