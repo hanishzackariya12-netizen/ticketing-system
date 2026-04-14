@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fb;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #111827;
+            color: white;
+            position: fixed;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            text-decoration: none;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            background: #1f2937;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 240px;
+            padding: 20px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .topbar h2 {
+            margin: 0;
+        }
+
+        /* 🔴 Logout Button */
+        .logout-btn {
+            text-decoration: none;
+            background: #ef4444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Cards */
+        .cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .card.open { background: #6c757d; }
+        .card.progress { background: #ffc107; color: black; }
+        .card.closed { background: #28a745; }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        th {
+            background: #111827;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f3f4f6;
+        }
+
+        tr:hover {
+            background: #e5e7eb;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .open { background: #6c757d; }
+        .inprogress { background: #f59e0b; }
+        .closed { background: #22c55e; }
+
+        /* Buttons */
+        select {
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            border: none;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>🎫 TicketSys</h2>
+    <a href="/admin">Dashboard</a>
+    <a href="/">Submit Ticket</a>
+</div>
+
+<div class="main">
+
+    <!-- ✅ UPDATED TOPBAR WITH LOGOUT -->
+    <div class="topbar">
+        <h2>Dashboard</h2>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+        <div class="card open">Open: {{ tickets|selectattr(5, 'equalto', 'Open')|list|length }}</div>
+        <div class="card progress">In Progress: {{ tickets|selectattr(5, 'equalto', 'In Progress')|list|length }}</div>
+        <div class="card closed">Closed: {{ tickets|selectattr(5, 'equalto', 'Closed')|list|length }}</div>
+    </div>
+
+    <!-- Table -->
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Issue</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Update</th>
+            <th>Action</th>
+        </tr>
+
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket[0] }}</td>
+            <td>{{ ticket[1] }}</td>
+            <td>{{ ticket[2] }}</td>
+            <td>{{ ticket[3] }}</td>
+
+            <td>{{ ticket[4] }}</td>
+
+            <td>
+                <span class="badge 
+                {% if ticket[5]=='Open' %}open
+                {% elif ticket[5]=='In Progress' %}inprogress
+                {% else %}closed{% endif %}">
+                {{ ticket[5] }}
+                </span>
+            </td>
+
+            <td>
+                <select onchange="updateStatus({{ticket[0]}}, this.value)">
+                    <option disabled selected>Change</option>
+                    <option value="Open">Open</option>
+                    <option value="In_Progress">In Progress</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </td>
+
+            <td>
+                <button class="delete-btn" onclick="deleteTicket({{ticket[0]}})">🗑</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+<script>
+function updateStatus(id, status) {
+    window.location.href = "/update_status/" + id + "/" + status;
+}
+
+function deleteTicket(id) {
+    if (confirm("Delete ticket?")) {
+        window.location.href = "/delete/" + id;
+    }
+}
+</script>
+
+</body>
+</html>
