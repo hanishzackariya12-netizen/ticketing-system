@@ -146,19 +146,19 @@ def chat():
 
     # ✅ SMART RULE-BASED RESPONSES (FAST + PROFESSIONAL)
     if "login" in user_message:
-        reply = "🔐 Login issue? Try resetting your password or check your credentials."
+        reply = "Login issue? Try resetting your password or check your credentials."
 
     elif "error" in user_message or "bug" in user_message:
-        reply = "⚠️ This looks like a technical issue. Please describe it clearly and set priority to HIGH."
+        reply = "This looks like a technical issue. Please describe it clearly and set priority to HIGH."
 
     elif "slow" in user_message or "performance" in user_message:
-        reply = "🐢 Performance issue detected. Usually MEDIUM priority. Mention where it's slow."
+        reply = "Performance issue detected. Usually MEDIUM priority. Mention where it's slow."
 
     elif "crash" in user_message:
-        reply = "💥 App crash is serious. Set priority to HIGH and include steps to reproduce."
+        reply = "App crash is serious. Set priority to HIGH and include steps to reproduce."
 
     elif "ticket" in user_message:
-        reply = "🎫 You can submit a ticket using the form. Fill all details and click submit."
+        reply = "You can submit a ticket using the form. Fill all details and click submit."
 
     elif "hello" in user_message or "hi" in user_message:
         reply = "👋 Hey! I'm your AI assistant. Tell me your issue 😊"
@@ -175,10 +175,10 @@ def chat():
                 reply = "🤖 " + data[0]["generated_text"]
 
             elif "error" in data:
-                reply = "🤖 AI is waking up... try again in a few seconds."
+                reply = "AI is waking up... try again in a few seconds."
 
             else:
-                reply = "🤖 I understand your issue. Please provide more details so I can help better."
+                reply = "I understand your issue. Please provide more details so I can help better."
 
         except:
             reply = "⚠️ AI unavailable. Please try again."
