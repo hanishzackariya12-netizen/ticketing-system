@@ -4,7 +4,6 @@
     <title>Submit Ticket</title>
 
     <style>
-/* BACKGROUND */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -31,15 +30,10 @@ body {
     color: white;
 }
 
-/* TITLE */
-.form-container h2 {
-    text-align: center;
-}
-
+/* TEXT */
+.form-container h2,
 .form-container p {
     text-align: center;
-    font-size: 14px;
-    opacity: 0.8;
 }
 
 /* INPUTS */
@@ -48,15 +42,26 @@ body {
 }
 
 .input-group input,
-.input-group textarea,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.25);
+    color: #000;
+}
+
+/* FIXED SELECT VISIBILITY */
 .input-group select {
     width: 100%;
     padding: 12px;
     border-radius: 10px;
     border: none;
     outline: none;
-    background: rgba(255,255,255,0.2);
-    color: white;
+    background: white;
+    color: black;
+    font-weight: 500;
 }
 
 /* BUTTONS */
@@ -87,7 +92,6 @@ body {
     padding: 14px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 1000;
 }
 
 /* CHATBOX */
@@ -103,7 +107,6 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     flex-direction: column;
     overflow: hidden;
-    z-index: 1000;
 }
 
 .chat-header {
@@ -152,7 +155,8 @@ body {
 <h2>Submit Ticket</h2>
 <p>Raise your issue and we’ll resolve it quickly</p>
 
-<form method="POST">
+<!-- ✅ FIXED FORM -->
+<form method="POST" action="/submit">
 
 <div class="input-group">
     <input type="text" name="name" required placeholder="Full Name">
@@ -234,7 +238,6 @@ function sendMessage() {
     input.value = "";
 }
 
-/* FIXED ENTER KEY */
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("userInput").addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
