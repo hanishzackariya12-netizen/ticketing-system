@@ -4,17 +4,15 @@
     <title>Submit Ticket</title>
 
     <style>
-
-/*  Background */
+/* BACKGROUND */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #1d2b64, #f8cdda);
+    background: linear-gradient(135deg, #1d2b64, #6dd5ed);
     height: 100vh;
-    overflow-x: hidden;
 }
 
-/*  Center Layout */
+/* CENTER */
 .container {
     display: flex;
     justify-content: center;
@@ -22,21 +20,20 @@ body {
     height: 100%;
 }
 
-/*  Glass Card */
+/* GLASS CARD */
 .form-container {
     width: 380px;
     padding: 30px;
     border-radius: 20px;
     backdrop-filter: blur(15px);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
     color: white;
 }
 
-/*  Title */
+/* TITLE */
 .form-container h2 {
     text-align: center;
-    margin-bottom: 5px;
 }
 
 .form-container p {
@@ -45,13 +42,11 @@ body {
     opacity: 0.8;
 }
 
-/*  Floating Input Group */
+/* INPUTS */
 .input-group {
-    position: relative;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
-/*  Inputs */
 .input-group input,
 .input-group textarea,
 .input-group select {
@@ -62,32 +57,9 @@ body {
     outline: none;
     background: rgba(255,255,255,0.2);
     color: white;
-    font-size: 14px;
 }
 
-/*  Labels */
-.input-group label {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-size: 13px;
-    color: #ddd;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-/*  Floating effect */
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label,
-.input-group textarea:focus + label,
-.input-group textarea:not(:placeholder-shown) + label {
-    top: -8px;
-    left: 8px;
-    font-size: 11px;
-    color: #fff;
-}
-
-/*  Buttons */
+/* BUTTONS */
 .btn {
     width: 100%;
     padding: 12px;
@@ -98,20 +70,13 @@ body {
     color: white;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/*  Dashboard Button */
 .dashboard-btn {
     background: linear-gradient(45deg, #232526, #414345);
 }
 
-/*  CHATBOX PREMIUM */
+/* CHAT BUTTON */
 .chat-btn {
     position: fixed;
     bottom: 20px;
@@ -122,10 +87,10 @@ body {
     padding: 14px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 999;
+    z-index: 1000;
 }
 
-/*  HIDDEN BY DEFAULT */
+/* CHATBOX */
 .chatbox {
     display: none;
     position: fixed;
@@ -138,7 +103,7 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     flex-direction: column;
     overflow: hidden;
-    z-index: 999;
+    z-index: 1000;
 }
 
 .chat-header {
@@ -152,6 +117,7 @@ body {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
+    font-size: 14px;
 }
 
 .chat-input {
@@ -175,8 +141,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
 }
-
-</style>
+    </style>
 </head>
 
 <body>
@@ -190,18 +155,15 @@ body {
 <form method="POST">
 
 <div class="input-group">
-    <input type="text" name="name" required placeholder=" ">
-    <label>Full Name</label>
+    <input type="text" name="name" required placeholder="Full Name">
 </div>
 
 <div class="input-group">
-    <input type="email" name="email" required placeholder=" ">
-    <label>Email Address</label>
+    <input type="email" name="email" required placeholder="Email Address">
 </div>
 
 <div class="input-group">
-    <textarea name="issue" required placeholder=" "></textarea>
-    <label>Issue Description</label>
+    <textarea name="issue" required placeholder="Issue Description"></textarea>
 </div>
 
 <div class="input-group">
@@ -221,10 +183,11 @@ body {
 </form>
 </div>
 </div>
-<!--Chat Button -->
+
+<!-- CHAT BUTTON -->
 <button class="chat-btn" onclick="toggleChat()">💬</button>
 
-<!--Chatbox -->
+<!-- CHATBOX -->
 <div id="chatbox" class="chatbox">
     <div class="chat-header">AI Assistant</div>
 
@@ -237,15 +200,9 @@ body {
 </div>
 
 <script>
-
 function toggleChat() {
     let box = document.getElementById("chatbox");
-
-    if (box.style.display === "flex") {
-        box.style.display = "none";
-    } else {
-        box.style.display = "flex";
-    }
+    box.style.display = (box.style.display === "flex") ? "none" : "flex";
 }
 
 function sendMessage() {
@@ -260,8 +217,10 @@ function sendMessage() {
 
     fetch("/chat", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: message})
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
     })
     .then(res => res.json())
     .then(data => {
@@ -269,19 +228,20 @@ function sendMessage() {
         msgBox.scrollTop = msgBox.scrollHeight;
     })
     .catch(() => {
-        msgBox.innerHTML += `<div><b>Bot:</b> Error connecting to server</div>`;
+        msgBox.innerHTML += `<div><b>Bot:</b> Server error</div>`;
     });
 
     input.value = "";
 }
 
-/* ENTER KEY SUPPORT */
-document.getElementById("userInput").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        sendMessage();
-    }
+/* FIXED ENTER KEY */
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
 });
-
 </script>
 
 </body>
