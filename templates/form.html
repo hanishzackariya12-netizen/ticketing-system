@@ -112,62 +112,67 @@ body {
 }
 
 /*  CHATBOX PREMIUM */
-.chatbox {
+.chat-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    background: #0072ff;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 999;
+}
+
+/*  HIDDEN BY DEFAULT */
+.chatbox {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
     width: 320px;
     height: 420px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    display: flex;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 999;
 }
 
-/* Header */
 .chat-header {
-    padding: 15px;
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    background: #0072ff;
     color: white;
+    padding: 12px;
     text-align: center;
-    font-weight: bold;
 }
 
-/* Messages */
 .chat-messages {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
-    font-size: 14px;
-    color: white;
 }
 
-/* Input Area */
 .chat-input {
     display: flex;
     padding: 10px;
     gap: 8px;
 }
 
-/* Input */
 .chat-input input {
     flex: 1;
     padding: 10px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-/* Send Button */
 .chat-input button {
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    background: #0072ff;
+    color: white;
     border: none;
     padding: 10px 14px;
-    border-radius: 10px;
-    color: white;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -176,7 +181,7 @@ body {
 
 <body>
 
-<<div class="container">
+<div class="container">
 <div class="form-container">
 
 <h2>Submit Ticket</h2>
@@ -216,9 +221,10 @@ body {
 </form>
 </div>
 </div>
-<!-- CHAT -->
-<button onclick="toggleChat()" class="chat-btn">💬</button>
+<!--Chat Button -->
+<button class="chat-btn" onclick="toggleChat()">💬</button>
 
+<!--Chatbox -->
 <div id="chatbox" class="chatbox">
     <div class="chat-header">AI Assistant</div>
 
@@ -226,40 +232,56 @@ body {
 
     <div class="chat-input">
         <input id="userInput" type="text" placeholder="Type message...">
-        <button onclick="sendMessage()">➤</button>
+        <button type="button" onclick="sendMessage()">➤</button>
     </div>
 </div>
 
 <script>
+
 function toggleChat() {
-    document.getElementById("chatbox").classList.toggle("active");
+    let box = document.getElementById("chatbox");
+
+    if (box.style.display === "flex") {
+        box.style.display = "none";
+    } else {
+        box.style.display = "flex";
+    }
 }
 
 function sendMessage() {
     let input = document.getElementById("userInput");
-    let msg = input.value;
+    let message = input.value.trim();
 
-    if (!msg) return;
+    if (message === "") return;
 
-    let box = document.getElementById("messages");
-    box.innerHTML += `<div><b>You:</b> ${msg}</div>`;
+    let msgBox = document.getElementById("messages");
+
+    msgBox.innerHTML += `<div><b>You:</b> ${message}</div>`;
 
     fetch("/chat", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: msg})
+        body: JSON.stringify({message: message})
     })
     .then(res => res.json())
     .then(data => {
-    msgBox.innerHTML += `<div><b>🤖 Bot:</b> ${data.reply}</div>`;
+        msgBox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+    })
+    .catch(() => {
+        msgBox.innerHTML += `<div><b>Bot:</b> Error connecting to server</div>`;
+    });
 
-    if (data.autofill) {
-        document.querySelector("textarea[name='description']").value = data.autofill.description;
-        document.querySelector("select[name='priority']").value = data.autofill.priority;
+    input.value = "";
+}
+
+/* ENTER KEY SUPPORT */
+document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
     }
+});
 
-    msgBox.scrollTop = msgBox.scrollHeight;
-})
 </script>
 
 </body>
