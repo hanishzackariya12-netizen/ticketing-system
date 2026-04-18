@@ -97,7 +97,7 @@ def submit():
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT INTO tickets (name, email, description, priority, status, created_at)
+        INSERT INTO tickets (name, email, issue, priority, status, created_at)
         VALUES (%s, %s, %s, %s, %s, %s)
     """, (name, email, issue, priority, 'Open', datetime.now()))
 
