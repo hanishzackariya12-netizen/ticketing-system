@@ -285,7 +285,9 @@ async function sendMessage() {
         if (data.autofill.email)
             document.getElementById("email").value = data.autofill.email;
 
-        document.getElementById("issue").value = data.autofill.description;
+       if (data.autofill.description) {
+    document.getElementById("issue").value = data.autofill.issue;
+}
         document.getElementById("priority").value = data.autofill.priority;
     }
 

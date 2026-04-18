@@ -199,6 +199,15 @@ def chat():
     lower_msg = user_message.lower()
     priority = "Low"
     reply = None
+    
+    # ✅ FIX 5 — PRIORITY DETECTION
+    if "crash" in lower_msg or "down" in lower_msg:
+     priority = "High"
+    elif "slow" in lower_msg or "lag" in lower_msg:
+     priority = "Medium"
+    
+    if lower_msg in ["hi", "hello", "hey"]:
+     reply = "Hey 👋 What’s going wrong? I’ll help you fix it."
 
     # ⚡ FAST SMART RULES (for UX)
     if "login" in lower_msg:
@@ -229,8 +238,14 @@ def chat():
     if "my name is" in lower_msg:
         name = lower_msg.replace("my name is", "").strip()
 
-    if not name and not email:
-        issue = user_message
+    issue = ""
+
+# Only treat as issue if it's meaningful
+    if len(user_message.split()) > 3 and "@" not in user_message:
+     issue = user_message
+     
+     if issue:
+      reply = "Got it 👍 I’ve added your issue. You can submit the ticket now."
 
     # 🤖 AI FALLBACK (REAL AI)
     if not reply:                                    # Fixed: indentation
