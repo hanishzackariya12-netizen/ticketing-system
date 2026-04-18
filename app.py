@@ -2,12 +2,44 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import psycopg2
 import os
 from openai import OpenAI
+import smtplib
+from email.mime.text import MIMEText
+import os
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret123"
+
+def send_email_alert(name, email, issue, priority):
+    sender_email = "yourgmail@gmail.com"
+    sender_password = "your_app_password"  # NOT your normal password
+
+    receiver_email = "yourgmail@gmail.com"
+
+    subject = f"New Ticket Submitted - {priority}"
+    body = f"""
+New Ticket Created
+
+Name: {name}
+Email: {email}
+Issue: {issue}
+Priority: {priority}
+"""
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+
+    try:
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.quit()
+    except:
+        print("Email failed")
 
 # ✅ DATABASE CONNECTION
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -81,6 +113,8 @@ def submit():
 
     conn.commit()
     conn.close()
+    
+    send_email_alert(name, email, issue, priority)
 
     return redirect('/?success=1')
 
@@ -186,11 +220,11 @@ def chat():
 
     #  Final response (ONLY ONE RETURN)
     return jsonify({
-        "reply": reply,
-        "autofill": {
-            "description": user_message,
-            "priority": priority
-        }
-    })
+    "reply": reply,
+    "autofill": {
+        "issue": user_message,
+        "priority": priority
+    }
+})
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

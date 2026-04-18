@@ -228,9 +228,18 @@ function sendMessage() {
     })
     .then(res => res.json())
     .then(data => {
-        msgBox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
-        msgBox.scrollTop = msgBox.scrollHeight;
-    })
+    msgBox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
+
+    // 🔥 AUTO FILL FORM
+    if (data.autofill) {
+        document.querySelector("textarea[name='issue']").value = data.autofill.issue;
+
+        let prioritySelect = document.querySelector("select[name='priority']");
+        prioritySelect.value = data.autofill.priority;
+    }
+
+    msgBox.scrollTop = msgBox.scrollHeight;
+})
     .catch(() => {
         msgBox.innerHTML += `<div><b>Bot:</b> Server error</div>`;
     });
