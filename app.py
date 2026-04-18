@@ -108,6 +108,22 @@ def submit():
 
     return redirect('/?success=1')
 
+@app.route("/fix-db")
+def fix_db():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("ALTER TABLE tickets ADD COLUMN description TEXT;")
+
+        conn.commit()
+        conn.close()
+
+        return "✅ Database fixed successfully!"
+
+    except Exception as e:
+        return f"❌ Error: {e}"
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
