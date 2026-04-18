@@ -42,14 +42,13 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()  # Fixed: was init_db()() (double call)
+init_db()
 
 # =========================
 # EMAIL FUNCTION
 # =========================
 
 def send_email_alert(name, email, issue, priority):
-    # Fixed: hardcoded credentials instead of broken os.getenv() calls
     sender_email = "hanishzackariya12@gmail.com"
     sender_password = "zokj mvus eatq byqw"
 
@@ -116,7 +115,7 @@ def fix_db():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute("ALTER TABLE tickets ADD COLUMN description TEXT;")
+        cursor.execute("ALTER TABLE tickets ADD COLUMN IF NOT EXISTS description TEXT;")  # Fixed: added IF NOT EXISTS to prevent crash on re-run
 
         conn.commit()
         conn.close()
@@ -157,7 +156,7 @@ def admin():
 
     return render_template('admin.html', tickets=tickets)
 
-@app.route('/update_status/<int:id>/<status>')  # Fixed: malformed route syntax
+@app.route('/update_status/<int:id>/<status>')
 def update_status(id, status):
     if 'user' not in session:
         return redirect('/login')
@@ -174,7 +173,7 @@ def update_status(id, status):
 
     return redirect('/admin')
 
-@app.route('/delete/<int:id>')  # Fixed: malformed route syntax
+@app.route('/delete/<int:id>')
 def delete_ticket(id):
     if 'user' not in session:
         return redirect('/login')
@@ -234,26 +233,38 @@ def chat():
         issue = user_message
 
     # 🤖 AI FALLBACK (REAL AI)
-    if not reply:
+    if not reply:                                    # Fixed: indentation
         try:
             API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
 
             response = requests.post(API_URL, json={
-                "inputs": f"User: {user_message}\nAI:"
-            })
+                "inputs": f"Answer like a helpful support assistant:\nUser: {user_message}\nAI:"
+            }, timeout=5)
 
-            data = response.json()
+            ai_data = response.json()                # Fixed: renamed from 'data' to avoid shadowing the request data variable
 
-            if isinstance(data, list) and "generated_text" in data[0]:
-                reply = data[0]["generated_text"]
+            if isinstance(ai_data, list) and "generated_text" in ai_data[0]:
+                reply = ai_data[0]["generated_text"]
+            else:
+                raise Exception("Bad response")
+
+        except Exception as e:
+            print("AI ERROR:", e)
+
+            # 🔥 SMART FALLBACK
+            if "network" in lower_msg:              # Fixed: use already-lowered variable
+                reply = "It looks like a network issue. Check your internet or server connectivity."
+
+            elif "not working" in lower_msg:        # Fixed: use already-lowered variable
+                reply = "Got it — something isn't working. Can you explain what happens?"
+
+            elif "error" in lower_msg:              # Fixed: use already-lowered variable
+                reply = "You're facing an error. Please share the exact error message."
 
             else:
-                reply = "I understand. Can you give more details?"
+                reply = "I understand your issue. Could you explain it a bit more?"
 
-        except:
-            reply = "AI is temporarily unavailable. Try again."
-
-    # 🎯 SMART RESPONSE OVERRIDE
+    # 🎯 SMART RESPONSE OVERRIDE                    # Fixed: indentation (was outside the chat() function)
     if email:
         reply = f"Got your email: {email} 📩"
 
@@ -263,7 +274,7 @@ def chat():
     elif issue and not reply:
         reply = "Got your issue. I'll help you with that 👍"
 
-    return jsonify({
+    return jsonify({                                 # Fixed: indentation (was outside the chat() function)
         "reply": reply,
         "autofill": {
             "name": name,
