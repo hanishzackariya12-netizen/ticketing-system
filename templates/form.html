@@ -276,7 +276,7 @@ async function sendMessage() {
 
     let data = await res.json();
 
-    box.innerHTML += "<b>Bot:</b> " + data.reply + "<br>";
+    typeMessage("Bot: " + data.reply);
 
     if (data.autofill) {
         if (data.autofill.name)
@@ -291,6 +291,24 @@ async function sendMessage() {
 
     box.scrollTop = box.scrollHeight;
 }
+function typeMessage(text) {
+    let box = document.getElementById("messages");
+    let div = document.createElement("div");
+
+    box.appendChild(div);
+
+    let i = 0;
+    function typing() {
+        if (i < text.length) {
+            div.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, 15);
+        }
+    }
+
+    typing();
+    box.scrollTop = box.scrollHeight;
+}
 
 // SUCCESS POPUP
 window.onload = () => {
@@ -302,6 +320,13 @@ window.onload = () => {
         setTimeout(() => popup.style.display = "none", 3000);
     }
 };
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+});
 </script>
 
 </body>

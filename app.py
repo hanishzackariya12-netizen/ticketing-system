@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import psycopg2
 import os
 import smtplib
+import re
+import requests
 from email.mime.text import MIMEText
 from datetime import datetime
 
@@ -193,48 +195,80 @@ def delete_ticket(id):
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
-    user_message = data.get("message", "").lower()
+    user_message = data.get("message", "")
 
+    lower_msg = user_message.lower()
     priority = "Low"
+    reply = None
+
+    # ⚡ FAST SMART RULES (for UX)
+    if "login" in lower_msg:
+        reply = "Try resetting your password or checking credentials."
+        priority = "Medium"
+
+    elif "error" in lower_msg or "bug" in lower_msg:
+        reply = "This seems like a technical issue. Set priority HIGH."
+        priority = "High"
+
+    elif "slow" in lower_msg:
+        reply = "Performance issue. Usually MEDIUM priority."
+        priority = "Medium"
+
+    elif "crash" in lower_msg:
+        reply = "Crash detected. Set HIGH priority and describe steps."
+        priority = "High"
+
+    # 🧠 SMART EXTRACTION
     name = ""
     email = ""
+    issue = ""
 
-    if "login" in user_message:
-        reply = "Login issue? Try resetting your password."
-        priority = "Medium"
+    email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', user_message)
+    if email_match:
+        email = email_match.group()
 
-    elif "error" in user_message or "bug" in user_message:
-        reply = "This looks like a technical issue. Set priority HIGH."
-        priority = "High"
+    if "my name is" in lower_msg:
+        name = lower_msg.replace("my name is", "").strip()
 
-    elif "slow" in user_message:
-        reply = "Performance issue. Set MEDIUM priority."
-        priority = "Medium"
+    if not name and not email:
+        issue = user_message
 
-    elif "crash" in user_message or "down" in user_message:
-        reply = "App crash is serious. Set HIGH priority."
-        priority = "High"
+    # 🤖 AI FALLBACK (REAL AI)
+    if not reply:
+        try:
+            API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
 
-    elif "hello" in user_message or "hi" in user_message:
-        reply = "Hey! Tell me your issue."
+            response = requests.post(API_URL, json={
+                "inputs": f"User: {user_message}\nAI:"
+            })
 
-    else:
-        reply = "Tell me more about your issue."
+            data = response.json()
 
-    if "@" in user_message:
-        email = user_message
-    elif "my name is" in user_message:
-        name = user_message.replace("my name is", "").strip()
+            if isinstance(data, list) and "generated_text" in data[0]:
+                reply = data[0]["generated_text"]
 
-    if name or email:
-        reply = "Got it! I've filled the form for you."
+            else:
+                reply = "I understand. Can you give more details?"
+
+        except:
+            reply = "AI is temporarily unavailable. Try again."
+
+    # 🎯 SMART RESPONSE OVERRIDE
+    if email:
+        reply = f"Got your email: {email} 📩"
+
+    elif name:
+        reply = f"Nice to meet you, {name}! 👋"
+
+    elif issue and not reply:
+        reply = "Got your issue. I'll help you with that 👍"
 
     return jsonify({
         "reply": reply,
         "autofill": {
             "name": name,
             "email": email,
-            "description": user_message,
+            "issue": issue,
             "priority": priority
         }
     })
