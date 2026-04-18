@@ -1,25 +1,71 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 import psycopg2
 import os
-from openai import OpenAI
 import smtplib
 from email.mime.text import MIMEText
-import os
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
 app.secret_key = "secret123"
 
+# =========================
+
+# DATABASE CONNECTION
+
+# =========================
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+def get_db_connection():
+return psycopg2.connect(DATABASE_URL)
+
+# =========================
+
+# INIT DATABASE
+
+# =========================
+
+def init_db():
+conn = get_db_connection()
+cursor = conn.cursor()
+
+```
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS tickets (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    description TEXT,
+    priority TEXT,
+    status TEXT DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+conn.commit()
+conn.close()
+```
+
+init_db()
+
+# =========================
+
+# EMAIL FUNCTION
+
+# =========================
+
 def send_email_alert(name, email, issue, priority):
-    sender_email = "yourgmail@gmail.com"
-    sender_password = "your_app_password"  # NOT your normal password
+sender_email = os.getenv("hanishzackariya12@gmail.com")
+sender_password = os.getenv("zokj mvus eatq byqw")
 
-    receiver_email = "yourgmail@gmail.com"
+```
+receiver_email = sender_email
 
-    subject = f"New Ticket Submitted - {priority}"
-    body = f"""
+subject = f"New Ticket - {priority}"
+body = f"""
+```
+
 New Ticket Created
 
 Name: {name}
@@ -28,203 +74,204 @@ Issue: {issue}
 Priority: {priority}
 """
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
+```
+msg = MIMEText(body)
+msg["Subject"] = subject
+msg["From"] = sender_email
+msg["To"] = f"{receiver_email}, {email}"
 
-    try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
-        server.quit()
-    except:
-        print("Email failed")
+try:
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(sender_email, sender_password)
+    server.sendmail(sender_email, [receiver_email, email], msg.as_string())
+    server.quit()
+    print("Email sent")
+except Exception as e:
+    print("Email failed:", e)
+```
 
-# ✅ DATABASE CONNECTION
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# =========================
 
-def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
+# ROUTES
 
-# ✅ CREATE TABLE
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
+# =========================
 
-    cursor.execute("""
-CREATE TABLE IF NOT EXISTS tickets (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    description TEXT,
-    priority TEXT,
-    status TEXT DEFAULT 'Pending'
-)
-""")
-
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# 🔐 LOGIN
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        if username == "mufeed" and password == "4321":
-            session['user'] = username
-            return redirect('/admin')
-        else:
-            return render_template('login.html', error="Invalid credentials")
-
-    return render_template('login.html')
-
-# 🔓 LOGOUT
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect('/login')
-
-# 🏠 HOME
 @app.route('/')
 def home():
-    return render_template('form.html')
+return render_template('form.html')
 
-# ➕ SUBMIT
+# SUBMIT TICKET
+
 @app.route('/submit', methods=['POST'])
 def submit():
-    name = request.form['name']
-    email = request.form['email']
-    issue = request.form['issue']
-    priority = request.form['priority']
+name = request.form['name']
+email = request.form['email']
+issue = request.form['issue']
+priority = request.form['priority']
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+```
+conn = get_db_connection()
+cursor = conn.cursor()
 
-    cursor.execute('''
-        INSERT INTO tickets (name, email, issue, priority, status, created_at)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    ''', (name, email, issue, priority, 'Open', datetime.now()))
+cursor.execute("""
+INSERT INTO tickets (name, email, description, priority, status, created_at)
+VALUES (%s, %s, %s, %s, %s, %s)
+""", (name, email, issue, priority, 'Open', datetime.now()))
 
-    conn.commit()
-    conn.close()
-    
-    send_email_alert(name, email, issue, priority)
+conn.commit()
+conn.close()
 
-    return redirect('/?success=1')
+# SEND EMAIL
+send_email_alert(name, email, issue, priority)
 
-# 🧑‍💼 ADMIN
+return redirect('/?success=1')
+```
+
+# LOGIN
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+if request.method == 'POST':
+if request.form['username'] == "mufeed" and request.form['password'] == "4321":
+session['user'] = "admin"
+return redirect('/admin')
+else:
+return render_template('login.html', error="Invalid credentials")
+
+```
+return render_template('login.html')
+```
+
+# LOGOUT
+
+@app.route('/logout')
+def logout():
+session.pop('user', None)
+return redirect('/login')
+
+# ADMIN PANEL
+
 @app.route('/admin')
 def admin():
-    if 'user' not in session:
-        return redirect('/login')
+if 'user' not in session:
+return redirect('/login')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+```
+conn = get_db_connection()
+cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM tickets ORDER BY id DESC")
-    tickets = cursor.fetchall()
+cursor.execute("SELECT * FROM tickets ORDER BY id DESC")
+tickets = cursor.fetchall()
 
-    conn.close()
+conn.close()
 
-    return render_template('admin.html', tickets=tickets)
+return render_template('admin.html', tickets=tickets)
+```
 
-# 🔄 UPDATE STATUS
-@app.route('/update_status/<int:id>/<status>')
+# UPDATE STATUS
+
+@app.route('/update_status/[int:id](int:id)/<status>')
 def update_status(id, status):
-    if 'user' not in session:
-        return redirect('/login')
+if 'user' not in session:
+return redirect('/login')
 
-    status = status.replace("_", " ")
+```
+status = status.replace("_", " ")
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+conn = get_db_connection()
+cursor = conn.cursor()
 
-    cursor.execute("UPDATE tickets SET status=%s WHERE id=%s", (status, id))
+cursor.execute("UPDATE tickets SET status=%s WHERE id=%s", (status, id))
 
-    conn.commit()
-    conn.close()
+conn.commit()
+conn.close()
 
-    return redirect('/admin')
+return redirect('/admin')
+```
 
-# 🗑 DELETE
-@app.route('/delete/<int:id>')
+# DELETE TICKET
+
+@app.route('/delete/[int:id](int:id)')
 def delete_ticket(id):
-    if 'user' not in session:
-        return redirect('/login')
+if 'user' not in session:
+return redirect('/login')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+```
+conn = get_db_connection()
+cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM tickets WHERE id=%s", (id,))
+cursor.execute("DELETE FROM tickets WHERE id=%s", (id,))
+conn.commit()
+conn.close()
 
-    conn.commit()
-    conn.close()
+return redirect('/admin')
+```
 
-    return redirect('/admin')
-    from flask import jsonify
-import requests
+# =========================
+
+# CHATBOT
+
+# =========================
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json.get("message").lower()
+user_message = request.json.get("message").lower()
 
-    # Default priority
-    priority = "Low"
+```
+priority = "Low"
 
-    #  RULE-BASED RESPONSES
-    if "login" in user_message:
-        reply = "Login issue? Try resetting your password or check your credentials."
-        priority = "Medium"
+if "login" in user_message:
+    reply = "Login issue? Try resetting your password."
+    priority = "Medium"
 
-    elif "error" in user_message or "bug" in user_message:
-        reply = "This looks like a technical issue. Please describe it clearly and set priority to HIGH."
-        priority = "High"
+elif "error" in user_message or "bug" in user_message:
+    reply = "This looks like a technical issue. Set priority HIGH."
+    priority = "High"
 
-    elif "slow" in user_message or "performance" in user_message:
-        reply = "Performance issue detected. Usually MEDIUM priority. Mention where it's slow."
-        priority = "Medium"
+elif "slow" in user_message:
+    reply = "Performance issue. Set MEDIUM priority."
+    priority = "Medium"
 
-    elif "crash" in user_message or "down" in user_message:
-        reply = "App crash is serious. Set priority to HIGH and include steps to reproduce."
-        priority = "High"
+elif "crash" in user_message or "down" in user_message:
+    reply = "App crash is serious. Set HIGH priority."
+    priority = "High"
 
-    elif "ticket" in user_message:
-        reply = "You can submit a ticket using the form. Fill all details and click submit."
+elif "hello" in user_message or "hi" in user_message:
+    reply = "Hey! Tell me your issue 😊"
 
-    elif "hello" in user_message or "hi" in user_message:
-        reply = "👋 Hey! I'm your AI assistant. Tell me your issue 😊"
+else:
+    reply = "Tell me more about your issue."
 
-    #  FREE AI FALLBACK (HuggingFace)
-    else:
-        API_URL = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
+# AUTO FILL
+name = ""
+email = ""
 
-        try:
-            response = requests.post(API_URL, json={"inputs": user_message})
-            data = response.json()
+if "@" in user_message:
+    email = user_message
 
-            if isinstance(data, list) and "generated_text" in data[0]:
-                reply = "🤖 " + data[0]["generated_text"]
-            elif "error" in data:
-                reply = "AI is waking up... try again in a few seconds."
-            else:
-                reply = "I understand your issue. Please provide more details so I can help better."
+elif "my name is" in user_message:
+    name = user_message.replace("my name is", "").strip()
 
-        except:
-            reply = "AI unavailable. Please try again."
+if name or email:
+    reply = "Got it! I've filled the form for you 👍"
 
-    #  Final response (ONLY ONE RETURN)
-    return jsonify({
+return jsonify({
     "reply": reply,
     "autofill": {
-        "issue": user_message,
+        "name": name,
+        "email": email,
+        "description": user_message,
         "priority": priority
     }
 })
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+```
+
+# =========================
+
+# RUN
+
+# =========================
+
+if **name** == '**main**':
+app.run(debug=True)

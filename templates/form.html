@@ -1,153 +1,192 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <title>Submit Ticket</title>
 
-    <style>
+```
+<style>
+```
+
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #1d2b64, #6dd5ed);
-    height: 100vh;
+margin: 0;
+font-family: 'Poppins', sans-serif;
+background: linear-gradient(135deg, #1d2b64, #6dd5ed);
+height: 100vh;
 }
 
-/* CENTER */
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
 }
 
-/* GLASS CARD */
 .form-container {
-    width: 380px;
-    padding: 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(15px);
-    background: rgba(255,255,255,0.15);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    color: white;
+width: 380px;
+padding: 30px;
+border-radius: 20px;
+backdrop-filter: blur(15px);
+background: rgba(255,255,255,0.15);
+box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+color: white;
 }
 
-/* TEXT */
 .form-container h2,
 .form-container p {
-    text-align: center;
+text-align: center;
 }
 
-/* INPUTS */
 .input-group {
-    margin-top: 15px;
+margin-top: 15px;
 }
 
 .input-group input,
 .input-group textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    background: rgba(255,255,255,0.25);
-    color: #000;
+width: 100%;
+padding: 12px;
+border-radius: 10px;
+border: none;
+outline: none;
+background: rgba(255,255,255,0.25);
+color: black;
 }
 
-/* FIXED SELECT VISIBILITY */
 .input-group select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    background: white;
-    color: black;
-    font-weight: 500;
+width: 100%;
+padding: 12px;
+border-radius: 10px;
+border: none;
+background: white;
+color: black;
+font-weight: 500;
 }
 
-/* BUTTONS */
 .btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+width: 100%;
+padding: 12px;
+margin-top: 15px;
+border: none;
+border-radius: 10px;
+background: linear-gradient(45deg, #00c6ff, #0072ff);
+color: white;
+font-weight: bold;
+cursor: pointer;
 }
 
 .dashboard-btn {
-    background: linear-gradient(45deg, #232526, #414345);
+background: linear-gradient(45deg, #232526, #414345);
 }
 
-/* CHAT BUTTON */
+/* CHAT */
 .chat-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #0072ff;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 50%;
-    cursor: pointer;
+position: fixed;
+bottom: 20px;
+right: 20px;
+background: #0072ff;
+color: white;
+border: none;
+padding: 14px;
+border-radius: 50%;
+cursor: pointer;
 }
 
-/* CHATBOX */
 .chatbox {
-    display: none;
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 320px;
-    height: 420px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    flex-direction: column;
-    overflow: hidden;
+display: none;
+position: fixed;
+bottom: 80px;
+right: 20px;
+width: 320px;
+height: 420px;
+background: white;
+border-radius: 15px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+flex-direction: column;
+overflow: hidden;
 }
 
 .chat-header {
-    background: #0072ff;
-    color: white;
-    padding: 12px;
-    text-align: center;
+background: #0072ff;
+color: white;
+padding: 12px;
+text-align: center;
 }
 
 .chat-messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 14px;
+flex: 1;
+padding: 10px;
+overflow-y: auto;
+font-size: 14px;
 }
 
 .chat-input {
-    display: flex;
-    padding: 10px;
-    gap: 8px;
+display: flex;
+padding: 10px;
+gap: 8px;
 }
 
 .chat-input input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+flex: 1;
+padding: 10px;
+border-radius: 8px;
+border: 1px solid #ccc;
 }
 
 .chat-input button {
-    background: #0072ff;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
+background: #0072ff;
+color: white;
+border: none;
+padding: 10px 14px;
+border-radius: 8px;
+cursor: pointer;
 }
-    </style>
+
+/* SUCCESS POPUP */
+.success-popup {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.4);
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 9999;
+}
+
+.success-box {
+background: white;
+padding: 30px;
+border-radius: 15px;
+text-align: center;
+animation: popIn 0.4s ease;
+}
+
+.checkmark {
+font-size: 40px;
+color: #28a745;
+margin-bottom: 10px;
+}
+
+@keyframes popIn {
+from { transform: scale(0.5); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+} </style>
+
 </head>
 
 <body>
+
+<!-- SUCCESS POPUP -->
+
+<div id="successPopup" class="success-popup">
+    <div class="success-box">
+        <div class="checkmark">✔</div>
+        <h3>Ticket Submitted!</h3>
+        <p>Your issue has been recorded successfully.</p>
+    </div>
+</div>
 
 <div class="container">
 <div class="form-container">
@@ -155,7 +194,6 @@ body {
 <h2>Submit Ticket</h2>
 <p>Raise your issue and we’ll resolve it quickly</p>
 
-<!-- ✅ FIXED FORM -->
 <form method="POST" action="/submit">
 
 <div class="input-group">
@@ -172,13 +210,13 @@ body {
 
 <div class="input-group">
     <select name="priority">
-        <option>Low</option>
-        <option>Medium</option>
-        <option>High</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
     </select>
 </div>
 
-<button class="btn">Submit Ticket</button>
+<button type="submit" class="btn">Submit Ticket</button>
 
 <a href="/admin">
     <button type="button" class="btn dashboard-btn">View Dashboard</button>
@@ -188,19 +226,21 @@ body {
 </div>
 </div>
 
-<!-- CHAT BUTTON -->
+<!-- CHAT -->
+
 <button class="chat-btn" onclick="toggleChat()">💬</button>
 
-<!-- CHATBOX -->
 <div id="chatbox" class="chatbox">
     <div class="chat-header">AI Assistant</div>
-
     <div id="messages" class="chat-messages"></div>
 
-    <div class="chat-input">
-        <input id="userInput" type="text" placeholder="Type message...">
-        <button type="button" onclick="sendMessage()">➤</button>
-    </div>
+```
+<div class="chat-input">
+    <input id="userInput" type="text" placeholder="Type message...">
+    <button onclick="sendMessage()">➤</button>
+</div>
+```
+
 </div>
 
 <script>
@@ -216,30 +256,33 @@ function sendMessage() {
     if (message === "") return;
 
     let msgBox = document.getElementById("messages");
-
     msgBox.innerHTML += `<div><b>You:</b> ${message}</div>`;
 
     fetch("/chat", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ message: message })
     })
     .then(res => res.json())
     .then(data => {
-    msgBox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
+        msgBox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
 
-    // 🔥 AUTO FILL FORM
-    if (data.autofill) {
-        document.querySelector("textarea[name='issue']").value = data.autofill.issue;
+        if (data.autofill) {
+            if (data.autofill.name)
+                document.querySelector('input[name="name"]').value = data.autofill.name;
 
-        let prioritySelect = document.querySelector("select[name='priority']");
-        prioritySelect.value = data.autofill.priority;
-    }
+            if (data.autofill.email)
+                document.querySelector('input[name="email"]').value = data.autofill.email;
 
-    msgBox.scrollTop = msgBox.scrollHeight;
-})
+            if (data.autofill.description)
+                document.querySelector('textarea[name="issue"]').value = data.autofill.description;
+
+            if (data.autofill.priority)
+                document.querySelector('select[name="priority"]').value = data.autofill.priority;
+        }
+
+        msgBox.scrollTop = msgBox.scrollHeight;
+    })
     .catch(() => {
         msgBox.innerHTML += `<div><b>Bot:</b> Server error</div>`;
     });
@@ -247,13 +290,28 @@ function sendMessage() {
     input.value = "";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("userInput").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            sendMessage();
-        }
-    });
+// ENTER KEY SEND
+document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
 });
+
+// SUCCESS POPUP
+function showSuccessPopup() {
+    const popup = document.getElementById("successPopup");
+    popup.style.display = "flex";
+
+    setTimeout(() => {
+        popup.style.display = "none";
+    }, 3000);
+}
+
+// TRIGGER FROM URL
+window.onload = function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success") === "1") {
+        showSuccessPopup();
+    }
+};
 </script>
 
 </body>
