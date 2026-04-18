@@ -287,8 +287,7 @@ def chat():
         reply = f"Nice to meet you, {name}! 👋"
 
     elif issue and not reply:
-        reply = "Got your issue. I'll help you with that 👍"
-
+       reply = f"Okay 👍 that sounds like a real issue.\n\n\"{issue}\"\n\nI've already filled it in the form. Just hit submit"
     return jsonify({                                 # Fixed: indentation (was outside the chat() function)
         "reply": reply,
         "autofill": {
