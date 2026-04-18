@@ -293,7 +293,7 @@ def chat():
         "autofill": {
             "name": name,
             "email": email,
-            "issue": issue,
+            "description": issue,
             "priority": priority
         }
     })
