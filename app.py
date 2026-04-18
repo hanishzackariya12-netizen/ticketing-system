@@ -240,8 +240,10 @@ def chat():
 
     issue = ""
 
-# Only treat as issue if it's meaningful
-    if len(user_message.split()) > 3 and "@" not in user_message:
+# detect real issue sentences
+    keywords = ["not working", "error", "crash", "slow", "bug", "issue", "problem", "fail"]
+
+    if any(word in lower_msg for word in keywords):
      issue = user_message
      
      if issue:
